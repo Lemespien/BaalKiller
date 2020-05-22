@@ -6,20 +6,45 @@ from image_index import IMAGE_DICTIONARY
 
 X_PAD_DEFAULT = 629
 Y_PAD_DEFAULT = 102
-NRDC_FINISHED = 19
+NRDC_FINISHED = 20
+NRC_FINISHED = 20
 
+#Creation center = x_pad + 940, y_pad + 480
+def find_game_window():
+    print("find_game_window was called")
+    found = False
+    retries = 10
+    while not found:
+        pos = imgS.imagesearch(IMAGE_DICTIONARY["new_game_window"], 0.3)
+        if pos[0] != -1:
+            found = True
+            print(f"find_game_window_new returned pos: {pos}")
+            return pos
+        pos_2 = imgS.imagesearch(IMAGE_DICTIONARY["new_game_window_2"], 0.3)
+        if pos_2[0] != -1:
+            found = True
+            print(f"find_game_window_new returned pos_2: {pos_2}")
+            return pos_2
+        if retries <= 0:
+            print(f"find_game_window_new stopped trying")
+            break
+        retries -= 1
+        print(f"find_game_window_new can't find the window. Retries {retries}")
+        time.sleep(.5)
 
 class Coordinates:
+    X_PAD, Y_PAD = find_game_window()
     def __init__(self):
         self.x_pad = X_PAD_DEFAULT
         self.y_pad = Y_PAD_DEFAULT
-        self.find_game_window_new()
+        self.find_game_window()
         self.game_region = (self.x_pad, self.y_pad, self.x_pad + 1280, self.y_pad + 645)
         self.safe_spot = (self.x_pad + 823, self.y_pad + 120)
         self.tooltip_region = (self.x_pad + 300, self.y_pad + 50, self.x_pad + 970, self.y_pad + 200)
         self.clone_count_region = (self.x_pad + 15, self.y_pad + 75, self.x_pad + 200, self.y_pad + 130)
+        self.center_of_screen = (self.x_pad + 629, self.y_pad + 452)
 
-    def find_game_window_new(self):
+    def find_game_window(self):
         print(f"{self} called find_game_window_new")
         found = False
         retries = 10
@@ -148,13 +173,6 @@ class CampaignCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
         self.tab = (self.x_pad + 375, self.y_pad + 115)
-        self.growth = (self.x_pad + 640, self.y_pad + 185)
-        self.divinity = (self.x_pad + 640, self.y_pad + 230)
-        self.food = (self.x_pad + 640, self.y_pad + 275)
-        self.item = (self.x_pad + 640, self.y_pad + 320)
-        self.level = (self.x_pad + 640, self.y_pad + 365)
-        self.multiplier = (self.x_pad + 640, self.y_pad + 410)
-        self.god_power = (self.x_pad + 640, self.y_pad + 455)
         hour_y = 225
         self.hour_1 = (self.x_pad + 330, self.y_pad + hour_y)
         self.hour_2 = (self.x_pad + 345, self.y_pad + hour_y)
@@ -167,56 +185,14 @@ class CampaignCords(Coordinates):
         self.hour_9 = (self.x_pad + 460, self.y_pad + hour_y)
         self.hour_10 = (self.x_pad + 485, self.y_pad + hour_y)
         self.hour_11 = (self.x_pad + 502, self.y_pad + hour_y)
-        self.hour_12 = (self.x_pad + 515, self.y_pad + 225)
-        self.auto_select = (self.x_pad + 640, self.y_pad + 260)
-        self.growt_padding = 35
-        self.padding = 25
-        self.restart_offset = 90  # campaign cord (x - 90)
-        # growth campaign cords + growth padding
-        self.growth_result = (self.x_pad + 640, self.y_pad + 220)
-        self.close_result = (self.x_pad + 475, self.y_pad + 575)
-        self.mighty_food = (self.x_pad + 755, self.y_pad + 350)
-        self.mayonaise = (self.x_pad + 870, self.y_pad + 440)
-        self.campaign_feed = (self.x_pad + 490, self.y_pad + 500)
-        self.no_feed = (self.x_pad + 640, self.y_pad + 500)
-        self.check_region_complete = (self.x_pad + 586, self.y_pad + 150, self.x_pad + 684, self.y_pad + 572)
-        self.campaign_text_region = (self.x_pad + 305, self.y_pad + 155, self.x_pad + 550, self.y_pad + 545)
+        self.hour_12 = (self.x_pad + 515, self.y_pad + hour_y)
 
 
 class DungeonCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 420, self.y_pad + 115)
+        self.tab = (self.x_pad + 420, self.Y_PAD + 115)
         self.dungeon_tab = (self.x_pad + 520, self.y_pad + 180)
-        self.newbie = (self.x_pad + 570, self.y_pad + 300)
-        self.water = (self.x_pad + 570, self.y_pad + 345)
-        self.volcano = (self.x_pad + 570, self.y_pad + 390)
-        self.mountain = (self.x_pad + 570, self.y_pad + 435)
-        self.forest = (self.x_pad + 570, self.y_pad + 475)
-        self.start = (self.x_pad + 875, self.y_pad + 605)
-        self.room_1 = (self.x_pad + 505, self.y_pad + 575)  # only need this one + room_count_offset_less_than_10
-        self.room_6 = (self.x_pad + 530, self.y_pad + 575)  # not needed
-        self.room_16 = (self.x_pad + 578, self.y_pad + 575)  # not needed
-        self.room_18 = (self.x_pad + 588, self.y_pad + 575)  # not needed
-        self.difficulty_0 = (self.x_pad + 330, self.y_pad + 575)  # only need this one + difficulty_count_offset
-        self.difficulty_1 = (self.x_pad + 340, self.y_pad + 575)  # not needed
-        self.difficulty_2 = (self.x_pad + 353, self.y_pad + 575)  # not needed
-        self.difficulty_3 = (self.x_pad + 360, self.y_pad + 575)  # not needed
-        self.difficulty_4 = (self.x_pad + 370, self.y_pad + 575)  # not needed
-        self.difficulty_5 = (self.x_pad + 380, self.y_pad + 575)  # not needed
-        self.difficulty_6 = (self.x_pad + 390, self.y_pad + 575)  # not needed
-        self.difficulty_7 = (self.x_pad + 400, self.y_pad + 575)  # not needed
-        self.difficulty_8 = (self.x_pad + 410, self.y_pad + 575)  # not needed
-        self.difficulty_9 = (self.x_pad + 420, self.y_pad + 575)  # not needed
-        self.difficulty_10 = (self.x_pad + 435, self.y_pad + 575)  # not needed
-        self.finish_offset = 90  # In x direction
-        self.room_count_offset_less_than_10 = 4.2  # for rooms less than 10
-        self.room_greater_than_10_offset = 4.4  # for rooms greater/equal to 10
-        self.difficulty_count_offset = 10.5  # rounding to 11 ?
-        self.close_result = (self.x_pad + 870, self.y_pad + 185)
-        self.next_team = (self.x_pad + 890, self.y_pad + 240)
-        self.region = (self.x_pad + 315, self.y_pad + 120, self.x_pad + 860, self.y_pad + 260)
-        self.items_back_button = (self.x_pad + 675, self.y_pad + 240)
         self.room_duration = 15*60 * (100-NRDC_FINISHED)/100
         self.padding = 25
         self.check_region_complete = (self.x_pad + 610, self.y_pad + 220, self.x_pad + 725, self.y_pad + 515)
@@ -226,16 +202,6 @@ class PlanetCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
         self.tab = (self.x_pad + 645, self.y_pad + 70)
-        self.UBsTab = (self.x_pad + 650, self.y_pad + 205)
-        self.UBsV2Tab = (self.x_pad + 735, self.y_pad + 205)
-        self.UBsV4Tab = (self.x_pad + 820, self.y_pad + 205)
-        self.crystalTab = (self.x_pad + 900, self.y_pad + 205)
-        self.power_surge_cap = (self.x_pad + 860, self.y_pad + 310)
-        self.power_surge_minus = (self.x_pad + 810, self.y_pad + 310)
-        self.PEFight = (self.x_pad + 880, self.y_pad + 390)
-        self.GTFight = (self.x_pad + 880, self.y_pad + 425)
-        self.LSFight = (self.x_pad + 880, self.y_pad + 460)
-        self.ITRTGFight = (self.x_pad + 880, self.y_pad + 495)
 
 
 class SpaceDimCords(Coordinates):

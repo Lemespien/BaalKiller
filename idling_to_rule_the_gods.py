@@ -5,8 +5,9 @@ import pyautogui as pg
 import coordinates as c
 import divinity_generator as div
 import dungeons as d
-
 import helpers
+from helpers import TimerClass
+import planet as p
 from image_index import IMAGE_DICTIONARY
 
 ACTIVE_DUNGEONS = {}
@@ -36,34 +37,37 @@ G_DUNGEON_INDEX = {
 }
 
 
-class TimerClass:
-    """ A class to track stuff """
-    name = ''
-    timer = 0
-    end_time = 0
-    index_of_timer = -1
+#class TimerClass:
+#    """ A class to track stuff """
+#    name = ''
+#    timer = 0
+#    end_time = 0
+#    index_of_timer = -1
 
-    def __init__(self, name, end_time):
-        self.name = name
-        self.timer = time.time()
-        self.end_time = end_time
-        ACTIVE_TIMERS.append(self)
-        self.index_of_timer = len(ACTIVE_TIMERS) - 1
+#    def __init__(self, name, end_time=-1):
+#        self.name = name
+#        self.timer = time.time()
+#        self.end_time = end_time
+#        ACTIVE_TIMERS.append(self)
+#        self.index_of_timer = len(ACTIVE_TIMERS) - 1
 
-    def set_end_time(self, value):
-        self.end_time = value
+#    def set_end_time(self, value):
+#        self.end_time = value
 
-    def reset_timer(self):
-        self.timer = time.time()
+#    def reset_timer(self):
+#        self.timer = time.time()
 
-    def time_elapsed(self):
-        time_elapsed = time.time() - self.timer
-        return time_elapsed
+#    def time_elapsed(self):
+#        time_elapsed = time.time() - self.timer
+#        return time_elapsed
 
-    def time_remaining(self):
-        time_elapsed = self.time_elapsed()
-        time_remaining = self.end_time - time_elapsed
-        return time_remaining
+#    def time_remaining(self):
+#        if self.end_time == -1:
+#            print(f"{self.name} has no end time")
+#            return
+#        time_elapsed = self.time_elapsed()
+#        time_remaining = self.end_time - time_elapsed
+#        return time_remaining
 
 
 class ActionClass:
@@ -334,7 +338,7 @@ def nrdc_loop(loop_count):
         # get current window location by getting a new DungeonCords object
         for dungeon_name in dungeons:
             dungeon = dungeons[dungeon_name]
-            print(f"{Fore.MAGENTA}{dungeon.name} has {str(dungeon.timer.time_remaining()):.0f}s remaining")
+            print(f"{Fore.MAGENTA}{dungeon.name} has {dungeon.timer.time_remaining():.0f}s remaining")
         pg.moveTo(Dungeon.COORDINATES.safe_spot)
         next_dungeon.collect_reward()
         time.sleep(4)  # Dungeos sometime have a 3-4 sec delay to open the reward screen
@@ -423,20 +427,66 @@ def get_hours_left(image):
 
 init(autoreset=True)
 
+def quick_rebirth():
+    """
+    pets.distribute()
+    gods.finger_flick()
+    monuments.div_gen_unlock()
+    creation.div_gen_unlock()
+    div_gen.construct()
+    div_gen.construct_upgrades()
+    for _ in range(x):
+        #
+        pets.distribute()
+        div_gen.add()
+        div_gen.construct_upgrades()
+    div_gen.remove_all_clones()
+    div_gen.cap_max()
+    planet.power_surge()
+    monuments.temple_of_god()
+    for _ in range(x):
+        # Idle loop
+        pets.distribute()
+        div_gen.add()
+    if creation.finished_cycle:
+        creation.weather()
+    end_of_run()
+        monuments.black_hole()
+        monuments.black_hole_upgrade()
+        god.finger_flick()
+        god.fight()
+        bp.food()
+        bp.light_clones()
+        bp.pet_stones()
+    quick_rebirth()
+    """
+
 
 def main():
     main_start_time = time.time()
     started_at = helpers.time_format()
+    main_timer = TimerClass("Rebirth")
     print(f'{Fore.GREEN}Script starting at:{started_at}\n')
-
-    # div_gen = div.Divinity(c.DivinityCords())
-    # if not div_gen.is_constructed:
-    #     print("divgen is not constructed")
-    #     div_gen.construct()
-    # time.sleep(1)
-
-    # if div_gen.is_constructed:
-    #     div_gen.construct_upgrades()
+    print("DungeonCords tab tab is: ", Dungeon.COORDINATES.tab)
+    time.sleep(5)
+    c.Coordinates.X_PAD, c.Coordinates.Y_PAD = c.find_game_window()
+    print("DungeonCords tab is: ", Dungeon.COORDINATES.tab)
+    #div_gen = div.Divinity(c.DivinityCords())
+    #if not div_gen.is_constructed:
+    #    print("divgen is not constructed")
+    #    div_gen.construct()
+    #planet = p.Planet()
+    #p.Planet.POWER_SURGING = True
+    #planet.fight_UB()
+    #planet.create_crystals()
+    #planet.upgrade_crystals()
+    #planet.equip_crystals()
+    ##if div_gen.is_constructed:
+    ##    div_gen.construct_upgrades()
+    ##div_gen.add_to_div()
+    ##div_gen.construct_upgrades()
+    #div_gen.remove_all_clones()
+    #div_gen.cap_max()
     # dungeon_test = Dungeon("water", "team_2", "depth_2", "18", "3")
     # # dungeon_test.check_if_active()
     # # dungeon_test.collect_reward()
@@ -447,7 +497,8 @@ def main():
     #     action.check_if_active()
     #     if not action.is_active:
     #         action.start_action()
-    nrdc_loop(50)
+
+    #nrdc_loop(50)
     # print(dungeon_test.get_cords())
     # print(Dungeon.COORDINATES)
     # infinite_loop()
