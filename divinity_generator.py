@@ -4,9 +4,11 @@ import pyautogui as pg
 import coordinates as c
 from image_index import IMAGE_DICTIONARY
 import helpers
+from tabs import Tabs
 
 
-class Divinity:
+class Divinity(Tabs):
+    COORDINATES = c.DivinityCords()
     PLUS = IMAGE_DICTIONARY["plus"]
     MINUS = IMAGE_DICTIONARY["minus"]
     GAIN_IMAGE = IMAGE_DICTIONARY["div_gain"]
@@ -15,17 +17,15 @@ class Divinity:
     WORKER_CLONES_IMAGE = IMAGE_DICTIONARY["worker_clones"]
     CLONES_TO_USE_IMAGE = IMAGE_DICTIONARY["clones_use"]
     CLONE_INPUT_IMAGE = IMAGE_DICTIONARY["clone_input"]
+    TABS = [COORDINATES.tab]
 
-    def __init__(self, coordinates=-1):
-        if coordinates == -1:
-            self.COORDINATES = c.DivinityCords()
-        else:
-            self.COORDINATES = coordinates
-        pg.click(self.COORDINATES.tab)
+    def __init__(self, name):
+        super().__init__(self, name)
+        self.go_to_tab()
         self.is_constructed = self.check_if_constructed()
 
     def check_if_constructed(self):
-        pg.click(self.COORDINATES.tab)
+        self.go_to_tab()
         pos = helpers.return_position_of_image_on_screen(IMAGE_DICTIONARY["div_gen_uc"])
         pos_2 = helpers.return_position_of_image_on_screen(IMAGE_DICTIONARY["div_gen_constructed"])
         if pos[0] != -1:
@@ -36,11 +36,12 @@ class Divinity:
             return True
 
     def construct(self):
-        pg.click(self.COORDINATES.tab)
+        self.go_to_tab()
         helpers.click_image_on_screen(Divinity.PLUS)
         self.is_constructed = True
 
     def construct_upgrades(self):
+        self.go_to_tab()
         coordinates = self.COORDINATES
         zone_x_width = 500
         zone_y_height = 60
@@ -57,13 +58,11 @@ class Divinity:
         self.add_or_remove_clones([Divinity.CAPACITY_IMAGE], zone_x_width, zone_y_height, Divinity.PLUS)
 
     def add_to_div(self):
-        coordinates = self.COORDINATES
-        pg.click(coordinates.tab)
+        self.go_to_tab()
         helpers.click_image_on_screen(IMAGE_DICTIONARY["add2"])
 
     def cap_max(self):
-        coordinates = self.COORDINATES
-        pg.click(coordinates.tab)
+        self.go_to_tab()
         helpers.click_image_on_screen(IMAGE_DICTIONARY["cap_max"])
         helpers.click_image_on_screen(IMAGE_DICTIONARY["fill"])
         self.add_to_div()
@@ -73,7 +72,7 @@ class Divinity:
         pg.write(str(amount))
 
     def remove_all_clones(self):
-        pg.click(self.COORDINATES.tab)
+        self.go_to_tab()
         helpers.click_image_on_screen(IMAGE_DICTIONARY["max"])
         images = [Divinity.GAIN_IMAGE, Divinity.CAPACITY_IMAGE, Divinity.CONVERT_IMAGE, Divinity.WORKER_CLONES_IMAGE]
         self.add_or_remove_clones(images, 500, 50, Divinity.MINUS)

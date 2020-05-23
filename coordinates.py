@@ -9,7 +9,9 @@ Y_PAD_DEFAULT = 102
 NRDC_FINISHED = 20
 NRC_FINISHED = 20
 
-#Creation center = X_PAD + 940, Y_PAD + 480
+# Creation center = X_PAD + 940, Y_PAD + 480
+
+
 def find_game_window():
     print("find_game_window was called")
     found = False
@@ -32,11 +34,11 @@ def find_game_window():
         print(f"find_game_window_new can't find the window. Retries {retries}")
         time.sleep(.5)
 
+
 class Coordinates:
     X_PAD, Y_PAD = find_game_window()
 
     def __init__(self):
-
         self.game_region = (0, 0, 970, 645)
         self.safe_spot = (823, 120)
         self.tooltip_region = (300, 50, 970, 200)
@@ -80,6 +82,7 @@ class Coordinates:
                     return (touple[0] + Coordinates.X_PAD, touple[1] + Coordinates.Y_PAD, touple[2] + Coordinates.X_PAD, touple[3] + Coordinates.Y_PAD)
             return touple
         return super(Coordinates, self).__getattribute__(attr)
+
 
 class CloneAmounts(Coordinates):
     def __init__(self):
@@ -197,9 +200,9 @@ class CampaignCords(Coordinates):
         self.hour_11 = (502, hour_y)
         self.hour_12 = (515, hour_y)
 
-    #@property
+    # @property
     #def hour_1(self): return (self._hour_1[0] + Coordinates.X_PAD, self._hour_1[1] + Coordinates.Y_PAD)
-    #@hour_1.setter
+    # @hour_1.setter
     #def hour_1(self, value): self._hour_1 = value
 
 

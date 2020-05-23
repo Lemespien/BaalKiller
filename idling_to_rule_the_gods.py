@@ -9,6 +9,9 @@ import helpers
 from helpers import TimerClass
 import planet as p
 from image_index import IMAGE_DICTIONARY
+import gods
+from tabs import Tabs
+import pets
 
 ACTIVE_DUNGEONS = {}
 ACTIVE_TIMERS = []
@@ -37,7 +40,7 @@ G_DUNGEON_INDEX = {
 }
 
 
-class ActionClass:
+class ActionClass(Tabs):
     COORDINATES = c.Coordinates()
     print(f"{Fore.CYAN}ActionClass called c.Coordinates() at {helpers.time_format()}")
     CORD_LAST_UPDATE = time.time()
@@ -50,7 +53,7 @@ class ActionClass:
     TABS = []
 
     def __init__(self, name):
-        self.name = name
+        super().__init__(name)
         self.timer = TimerClass(self.name, -1)
         self.is_active = False
         self.action_region = -1
@@ -136,24 +139,6 @@ class ActionClass:
         time.sleep(0.1)
         self.is_active = False
 
-    def get_cords(self):
-        if time.time() - self.CORD_LAST_UPDATE > 5:
-            self.update_cords()
-        return self.COORDINATES
-
-    def update_cords(self):
-        self.COORDINATES.find_game_window()
-        self.CORD_LAST_UPDATE = time.time()
-        print(f"{self.name} last update was {time.time() - self.CORD_LAST_UPDATE} ago")
-        print(f"{self.name} called for a cord update at {helpers.time_format(self.CORD_LAST_UPDATE)}")
-
-    def go_to_tab(self):
-        if time.time() - self.CORD_LAST_UPDATE > 5:
-            self.update_cords()
-        for tab in self.TABS:
-            pg.click(tab)
-        pg.moveTo(self.COORDINATES.safe_spot)
-
 
 class Campaign(ActionClass):
     COORDINATES = c.CampaignCords()
@@ -186,7 +171,6 @@ class Campaign(ActionClass):
         pg.moveTo(coordinates.safe_spot)
         helpers.click_image_on_screen(IMAGE_DICTIONARY[self.CLOSE_BUTTON])
         self.is_active = True
-
 
 
 class Dungeon(ActionClass):
@@ -372,6 +356,7 @@ def get_hours_left(image):
 
 init(autoreset=True)
 
+
 def quick_rebirth():
     """
     pets.distribute()
@@ -413,34 +398,40 @@ def main():
     main_timer = TimerClass("Rebirth")
     print(f'{Fore.GREEN}Script starting at:{started_at}\n')
     #div_gen = div.Divinity(c.DivinityCords())
-    #if not div_gen.is_constructed:
+    # if not div_gen.is_constructed:
     #    print("divgen is not constructed")
     #    div_gen.construct()
-    #div_gen.construct_upgrades()
+    # div_gen.construct_upgrades()
     #planet = p.Planet()
     #p.Planet.POWER_SURGING = True
-    #planet.fight_UB()
-    #planet.create_crystals()
-    #planet.upgrade_crystals()
-    #planet.equip_crystals()
-    ##if div_gen.is_constructed:
-    ##    div_gen.construct_upgrades()
-    ##div_gen.add_to_div()
-    ##div_gen.construct_upgrades()
-    #div_gen.remove_all_clones()
-    #div_gen.cap_max()
+    # planet.fight_UB()
+    # planet.create_crystals()
+    # planet.upgrade_crystals()
+    # planet.equip_crystals()
+    # if div_gen.is_constructed:
+    # div_gen.construct_upgrades()
+    # div_gen.add_to_div()
+    # div_gen.construct_upgrades()
+    # div_gen.remove_all_clones()
+    # div_gen.cap_max()
     #dungeon_test = Dungeon("water", "team_2", "depth_2", "18", "3")
-    #dungeon_test.check_if_active()
-    #dungeon_test.collect_reward()
-    #dungeon_test.start_action()
-    create_default_actions(c.DungeonCords(), c.CampaignCords())
-    for action in ActionClass.ALL_ACTION_CLASSES:
-        action = ActionClass.ALL_ACTION_CLASSES[action]
-        action.check_if_active()
-        if not action.is_active:
-            action.start_action()
+    # dungeon_test.check_if_active()
+    # dungeon_test.collect_reward()
+    # dungeon_test.start_action()
+    # create_default_actions(c.DungeonCords(), c.CampaignCords())
+    # for action in ActionClass.ALL_ACTION_CLASSES:
+    #     action = ActionClass.ALL_ACTION_CLASSES[action]
+    #     action.check_if_active()
+    #     if not action.is_active:
+    #         action.start_action()
+    # pet = pets.Pets(c.PetCords())
+    # pet = pets.Pets(c.PetCords())
+    # pet.distribute()
+    # god = gods.Gods(c.GodCords())
+    # god.finger_flick()
+    # god.fight()
 
-    #nrdc_loop(50)
+    # nrdc_loop(50)
     # print(dungeon_test.get_cords())
     # print(Dungeon.COORDINATES)
     # infinite_loop()
