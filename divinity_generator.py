@@ -43,7 +43,7 @@ class Divinity:
     def construct_upgrades(self):
         coordinates = self.COORDINATES
         zone_x_width = 500
-        zone_y_height = 50
+        zone_y_height = 60
         current_clones = helpers.get_clone_count(coordinates)
         clones_on_capacity = round(current_clones/20)
         current_clones -= clones_on_capacity
@@ -82,4 +82,9 @@ class Divinity:
         coordinates = self.COORDINATES
         for image in images:
             zone = helpers.get_active_zone(image, zone_x_width, zone_y_height, coordinates)
+            print("add_or_remove_clones zone:", zone)
+            pg.moveTo(zone[0], zone[1])
+            time.sleep(3)
+            pg.moveTo(zone[2], zone[3])
+            time.sleep(3)
             helpers.click_image_in_zone(click_image, zone=zone)

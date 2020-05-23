@@ -46,8 +46,8 @@ class Baal_Part():
 
 
 BAAL_PART = Baal_Part()
-X_PAD_DEFAULT = BAAL_PART.baal_part_cords.x_pad
-Y_PAD_DEFAULT = BAAL_PART.baal_part_cords.y_pad
+X_PAD_DEFAULT = BAAL_PART.baal_part_cords.X_PAD
+Y_PAD_DEFAULT = BAAL_PART.baal_part_cords.Y_PAD
 
 
 def screenGrab():

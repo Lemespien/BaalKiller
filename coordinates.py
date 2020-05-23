@@ -9,7 +9,7 @@ Y_PAD_DEFAULT = 102
 NRDC_FINISHED = 20
 NRC_FINISHED = 20
 
-#Creation center = x_pad + 940, y_pad + 480
+#Creation center = X_PAD + 940, Y_PAD + 480
 def find_game_window():
     print("find_game_window was called")
     found = False
@@ -34,15 +34,14 @@ def find_game_window():
 
 class Coordinates:
     X_PAD, Y_PAD = find_game_window()
+
     def __init__(self):
-        self.x_pad = X_PAD_DEFAULT
-        self.y_pad = Y_PAD_DEFAULT
-        self.find_game_window()
-        self.game_region = (self.x_pad, self.y_pad, self.x_pad + 1280, self.y_pad + 645)
-        self.safe_spot = (self.x_pad + 823, self.y_pad + 120)
-        self.tooltip_region = (self.x_pad + 300, self.y_pad + 50, self.x_pad + 970, self.y_pad + 200)
-        self.clone_count_region = (self.x_pad + 15, self.y_pad + 75, self.x_pad + 200, self.y_pad + 130)
-        self.center_of_screen = (self.x_pad + 629, self.y_pad + 452)
+
+        self.game_region = (0, 0, 970, 645)
+        self.safe_spot = (823, 120)
+        self.tooltip_region = (300, 50, 970, 200)
+        self.clone_count_region = (15, 75, 200, 130)
+        self.center_of_screen = (629, 452)
 
     def find_game_window(self):
         print(f"{self} called find_game_window_new")
@@ -52,15 +51,15 @@ class Coordinates:
             pos = imgS.imagesearch(IMAGE_DICTIONARY["new_game_window"], 0.3)
             if pos[0] != -1:
                 found = True
-                self.x_pad = pos[0]
-                self.y_pad = pos[1]
+                Coordinates.X_PAD = pos[0]
+                Coordinates.Y_PAD = pos[1]
                 print(f"find_game_window_new returned pos: {pos}")
                 return pos
             pos_2 = imgS.imagesearch(IMAGE_DICTIONARY["new_game_window_2"], 0.3)
             if pos_2[0] != -1:
                 found = True
-                self.x_pad = pos_2[0]
-                self.y_pad = pos_2[1]
+                Coordinates.X_PAD = pos_2[0]
+                Coordinates.Y_PAD = pos_2[1]
                 print(f"find_game_window_new returned pos_2: {pos_2}")
                 return pos_2
             if retries <= 0:
@@ -70,173 +69,187 @@ class Coordinates:
             print(f"find_game_window_new can't find the window. Retries {retries}")
             time.sleep(.5)
 
+    def __getattribute__(self, attr):
+        __dict__ = super(Coordinates, self).__getattribute__('__dict__')
+        if attr in __dict__:
+            touple = super(Coordinates, self).__getattribute__(attr)
+            if isinstance(touple, tuple):
+                if len(touple) == 2:
+                    return (touple[0] + Coordinates.X_PAD, touple[1] + Coordinates.Y_PAD)
+                if len(touple) == 4:
+                    return (touple[0] + Coordinates.X_PAD, touple[1] + Coordinates.Y_PAD, touple[2] + Coordinates.X_PAD, touple[3] + Coordinates.Y_PAD)
+            return touple
+        return super(Coordinates, self).__getattribute__(attr)
 
 class CloneAmounts(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.one = (self.x_pad + 580, self.y_pad + 170)
-        self.ten = (self.x_pad + 630, self.y_pad + 170)
-        self.twoHundredK = (self.x_pad + 680, self.y_pad + 170)
-        self.oneK = (self.x_pad + 730, self.y_pad + 170)
-        self.tenK = (self.x_pad + 780, self.y_pad + 170)
-        self.hundredK = (self.x_pad + 830, self.y_pad + 170)
-        self.oneM = (self.x_pad + 880, self.y_pad + 170)
-        self.maxAmount = (self.x_pad + 930, self.y_pad + 170)
+        self.one = (580, 170)
+        self.ten = (630, 170)
+        self.twoHundredK = (680, 170)
+        self.oneK = (730, 170)
+        self.tenK = (780, 170)
+        self.hundredK = (830, 170)
+        self.oneM = (880, 170)
+        self.maxAmount = (930, 170)
 
 
 class ConfirmCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.yes = (self.x_pad + 99, self.y_pad + 450)
-        self.no = (self.x_pad + 221, self.y_pad + 450)
+        self.yes = (99, 450)
+        self.no = (221, 450)
 
 
 class RebirthCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 152, self.y_pad + 198)
-        self.button = (self.x_pad + 89, self.y_pad + 566)
-        self.confirm = (self.x_pad + 575, self.y_pad + 440)
-        self.confirm_2 = (self.x_pad + 575, self.y_pad + 410)
-        self.confirm_3 = (self.x_pad + 575, self.y_pad + 380)
-        self.godPowerGain = (self.x_pad + 474, self.y_pad + 571)
+        self.tab = (152, 198)
+        self.button = (89, 566)
+        self.confirm = (575, 440)
+        self.confirm_2 = (575, 410)
+        self.confirm_3 = (575, 380)
+        self.godPowerGain = (474, 571)
 
 
 class PetCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 330, self.y_pad + 117)
-        self.distribute = (self.x_pad + 791, self.y_pad + 181)
-        self.feed = (self.x_pad + 895, self.y_pad + 360)
-        self.buyFoodButton = (self.x_pad + 895, self.y_pad + 470)
-        self.bpFoodOption = (self.x_pad + 420, self.y_pad + 330)
-        self.buyFoodMax = (self.x_pad + 585, self.y_pad + 485)
-        self.confirmPurchase = (self.x_pad + 95, self.y_pad + 425)
+        self.tab = (330, 117)
+        self.distribute = (791, 181)
+        self.feed = (895, 360)
+        self.buyFoodButton = (895, 470)
+        self.bpFoodOption = (420, 330)
+        self.buyFoodMax = (585, 485)
+        self.confirmPurchase = (95, 425)
 
 
 class GodCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 510, self.y_pad + 70)
-        self.fingerFlick = (self.x_pad + 725, self.y_pad + 170)
-        self.unleash = (self.x_pad + 880, self.y_pad + 170)
-        self.fight = (self.x_pad + 775, self.y_pad + 245)
+        self.tab = (510, 70)
+        self.fingerFlick = (725, 170)
+        self.unleash = (880, 170)
+        self.fight = (775, 245)
 
 
 class MonumentCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 556, self.y_pad + 70)
-        self.mightyStatuePlus = (self.x_pad + 810, self.y_pad + 305)  # scroll at top
-        self.mightyStatueMinus = (self.x_pad + 870, self.y_pad + 305)  # scroll at top
-        self.toGPlus = (self.x_pad + 810, self.y_pad + 460)  # scroll at bottom
-        self.toGMinus = (self.x_pad + 870, self.y_pad + 460)  # scroll at bottom
-        self.toGUpgradePlus = (self.x_pad + 810, self.y_pad + 495)  # scroll at bottom
-        self.toGUpgradeMinus = (self.x_pad + 870, self.y_pad + 495)  # scroll at bottom
-        self.topOfScroll = (self.x_pad + 930, self.y_pad + 290)
-        self.bottomOfScroll = (self.x_pad + 930, self.y_pad + 610)
+        self.tab = (556, 70)
+        self.mightyStatuePlus = (810, 305)  # scroll at top
+        self.mightyStatueMinus = (870, 305)  # scroll at top
+        self.toGPlus = (810, 460)  # scroll at bottom
+        self.toGMinus = (870, 460)  # scroll at bottom
+        self.toGUpgradePlus = (810, 495)  # scroll at bottom
+        self.toGUpgradeMinus = (870, 495)  # scroll at bottom
+        self.topOfScroll = (930, 290)
+        self.bottomOfScroll = (930, 610)
 
 
 class CreatingCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 332, self.y_pad + 70)
-        self.light = (self.x_pad + 805, self.y_pad + 391)
-        self.weather = (self.x_pad + 805, self.y_pad + 470)
-        self.weather_scroll_position = (self.x_pad + 940, self.y_pad + 510)
-        self.nextAtOff = (self.x_pad + 822, self.y_pad + 320)
-        self.nextAt_1 = (self.x_pad + 868, self.y_pad + 320)
-        self.nextAt_2 = (self.x_pad + 914, self.y_pad + 320)
-        self.createMaxClones = (self.x_pad + 918, self.y_pad + 174)
-        self.autoBuy = (self.x_pad + 914, self.y_pad + 200)
+        self.tab = (332, 70)
+        self.light = (805, 391)
+        self.weather = (805, 470)
+        self.weather_scroll_position = (940, 510)
+        self.nextAtOff = (822, 320)
+        self.nextAt_1 = (868, 320)
+        self.nextAt_2 = (914, 320)
+        self.createMaxClones = (918, 174)
+        self.autoBuy = (914, 200)
 
 
 class DivinityCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 600, self.y_pad + 70)
-        self.divGenPlus = (self.x_pad + 780, self.y_pad + 300)
-        self.capacity = (self.x_pad + 810, self.y_pad + 530)
-        self.capacityMinus = (self.x_pad + 870, self.y_pad + 530)
-        self.gain = (self.x_pad + 810, self.y_pad + 565)
-        self.gainMinus = (self.x_pad + 870, self.y_pad + 565)
-        self.speed = (self.x_pad + 810, self.y_pad + 600)
-        self.speedMinus = (self.x_pad + 870, self.y_pad + 600)
-        self.add = (self.x_pad + 910, self.y_pad + 285)
-        self.fill = (self.x_pad + 910, self.y_pad + 320)
-        self.workerPlus = (self.x_pad + 710, self.y_pad + 445)
-        self.workerMinus = (self.x_pad + 760, self.y_pad + 445)
-        self.CAPmax = (self.x_pad + 890, self.y_pad + 445)
+        self.tab = (600, 70)
+        self.divGenPlus = (780, 300)
+        self.capacity = (810, 530)
+        self.capacityMinus = (870, 530)
+        self.gain = (810, 565)
+        self.gainMinus = (870, 565)
+        self.speed = (810, 600)
+        self.speedMinus = (870, 600)
+        self.add = (910, 285)
+        self.fill = (910, 320)
+        self.workerPlus = (710, 445)
+        self.workerMinus = (760, 445)
+        self.CAPmax = (890, 445)
 
 
 class CampaignCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 375, self.y_pad + 115)
+        self.tab = (375, 115)
         hour_y = 225
-        self.hour_1 = (self.x_pad + 330, self.y_pad + hour_y)
-        self.hour_2 = (self.x_pad + 345, self.y_pad + hour_y)
-        self.hour_3 = (self.x_pad + 360, self.y_pad + hour_y)
-        self.hour_4 = (self.x_pad + 375, self.y_pad + hour_y)
-        self.hour_5 = (self.x_pad + 390, self.y_pad + hour_y)
-        self.hour_6 = (self.x_pad + 405, self.y_pad + hour_y)
-        self.hour_7 = (self.x_pad + 420, self.y_pad + hour_y)
-        self.hour_8 = (self.x_pad + 435, self.y_pad + hour_y)
-        self.hour_9 = (self.x_pad + 460, self.y_pad + hour_y)
-        self.hour_10 = (self.x_pad + 485, self.y_pad + hour_y)
-        self.hour_11 = (self.x_pad + 502, self.y_pad + hour_y)
-        self.hour_12 = (self.x_pad + 515, self.y_pad + hour_y)
+        self.hour_1 = (330, hour_y)
+        self.hour_2 = (345, hour_y)
+        self.hour_3 = (360, hour_y)
+        self.hour_4 = (375, hour_y)
+        self.hour_5 = (390, hour_y)
+        self.hour_6 = (405, hour_y)
+        self.hour_7 = (420, hour_y)
+        self.hour_8 = (435, hour_y)
+        self.hour_9 = (460, hour_y)
+        self.hour_10 = (485, hour_y)
+        self.hour_11 = (502, hour_y)
+        self.hour_12 = (515, hour_y)
+
+    #@property
+    #def hour_1(self): return (self._hour_1[0] + Coordinates.X_PAD, self._hour_1[1] + Coordinates.Y_PAD)
+    #@hour_1.setter
+    #def hour_1(self, value): self._hour_1 = value
 
 
 class DungeonCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 420, self.Y_PAD + 115)
-        self.dungeon_tab = (self.x_pad + 520, self.y_pad + 180)
+        self.tab = (420, 115)
+        self.dungeon_tab = (520, 180)
         self.room_duration = 15*60 * (100-NRDC_FINISHED)/100
-        self.padding = 25
-        self.check_region_complete = (self.x_pad + 610, self.y_pad + 220, self.x_pad + 725, self.y_pad + 515)
 
 
 class PlanetCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 645, self.y_pad + 70)
+        self.tab = (645, 70)
 
 
 class SpaceDimCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.tab = (self.x_pad + 690, self.y_pad + 70)
-        self.buy_more_button = (self.x_pad + 750, self.y_pad + 200)
-        self.buy_lowest = (self.x_pad + 775, self.y_pad + 395)
-        self.buy_middle = (self.x_pad + 775, self.y_pad + 430)
-        self.buy_max = (self.x_pad + 775, self.y_pad + 470)
-        self.region_to_check = (self.x_pad + 305, self.y_pad + 415, self.x_pad + 955, self.y_pad + 570)
+        self.tab = (690, 70)
+        self.buy_more_button = (750, 200)
+        self.buy_lowest = (775, 395)
+        self.buy_middle = (775, 430)
+        self.buy_max = (775, 470)
+        self.region_to_check = (305, 415, 955, 570)
 
 
 class BaalPartsCords(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.b_crit_start = (self.x_pad + 387, self.y_pad + 301)
-        self.b_crit_stop = (self.x_pad + 466, self.y_pad + 301)
-        self.b_wing_start = (self.x_pad + 368, self.y_pad + 371)
-        self.b_wing_stop = (self.x_pad + 368, self.y_pad + 408)
-        self.b_tail_start = (self.x_pad + 434, self.y_pad + 581)
-        self.b_tail_stop = (self.x_pad + 517, self.y_pad + 581)
-        self.b_feet_start = (self.x_pad + 684, self.y_pad + 570)
-        self.b_feet_stop = (self.x_pad + 766, self.y_pad + 570)
-        self.b_mouth_start = (self.x_pad + 836, self.y_pad + 322)
-        self.b_mouth_stop = (self.x_pad + 836, self.y_pad + 367)
+        self.b_crit_start = (387, 301)
+        self.b_crit_stop = (466, 301)
+        self.b_wing_start = (368, 371)
+        self.b_wing_stop = (368, 408)
+        self.b_tail_start = (434, 581)
+        self.b_tail_stop = (517, 581)
+        self.b_feet_start = (684, 570)
+        self.b_feet_stop = (766, 570)
+        self.b_mouth_start = (836, 322)
+        self.b_mouth_stop = (836, 367)
 
 
 class BaalRegions(Coordinates):
     def __init__(self):
         Coordinates.__init__(self)
-        self.b_wing = (self.x_pad + 402, self.y_pad + 326, self.x_pad + 435, self.y_pad + 477)
-        self.b_tail = (self.x_pad + 397, self.y_pad + 535, self.x_pad + 550, self.y_pad + 561)
-        self.b_feet = (self.x_pad + 646, self.y_pad + 522, self.x_pad + 803, self.y_pad + 554)
-        self.b_mouth = (self.x_pad + 874, self.y_pad + 280, self.x_pad + 908, self.y_pad + 435)
+        self.b_wing = (402, 326, 435, 477)
+        self.b_tail = (397, 535, 550, 561)
+        self.b_feet = (646, 522, 803, 554)
+        self.b_mouth = (874, 280, 908, 435)
 
 
 class BaalImages(Coordinates):

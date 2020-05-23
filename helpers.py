@@ -10,11 +10,12 @@ import chilimangoes as chili
 from colorama import Fore, Back, Style
 pyte.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
+
 def get_clone_count(coordinates=-1):
     if coordinates == -1:
         coordinates = c.Coordinates()
-    clone_count_image = helpers.get_image_from_zone(coordinates.clone_count_region)
-    text = helpers.get_text_from_image(clone_count_image)
+    clone_count_image = get_image_from_zone(coordinates.clone_count_region)
+    text = get_text_from_image(clone_count_image)
     split_text = text.split()
     try:
         index_of_slash = split_text.index("/")
@@ -26,6 +27,7 @@ def get_clone_count(coordinates=-1):
         return -1
     return clone_count
 
+
 def scroll_to_top(coordinates=-1):
     if coordinates == -1:
         coordinates = c.Coordinates()
@@ -33,12 +35,14 @@ def scroll_to_top(coordinates=-1):
     pg.moveTo(x, y)
     pg.scroll(10000)
 
+
 def scroll_to_bottom(coordinates=-1):
     if coordinates == -1:
         coordinates = c.Coordinates()
     x, y = coordinates.center_of_screen
     pg.moveTo(x, y)
     pg.scroll(-10000)
+
 
 def find_image_on_screen(image, x_1, y_1, x_2, y_2):
     found = False
@@ -63,7 +67,7 @@ def add_screen_padding(pos, coordinates=-1):
         coordinates = c.Coordinates()
     if pos[0] == -1 and pos[1] == -1:
         return (-1, -1)
-    return (pos[0] + coordinates.x_pad, pos[1] + coordinates.y_pad)
+    return (pos[0] + coordinates.X_PAD, pos[1] + coordinates.Y_PAD)
 
 
 def find_image_in_game_window(image, precision=0.8, retries=3, coordinates=-1):
@@ -121,6 +125,7 @@ def click_image_in_zone(image, x_1=None, y_1=None, x_2=None, y_2=None, clicks=1,
     if image_pos[0] != -1:
         pg.click(x_1 + image_pos[0] + width/2, y_1 + image_pos[1] + height/2, clicks=clicks)
 
+
 def get_active_zone(image, x_length, y_height, coordinates=-1):
     if coordinates == -1:
         coordinates = c.Coordinates()
@@ -131,6 +136,7 @@ def get_active_zone(image, x_length, y_height, coordinates=-1):
     y = round(pos[1]) - 35
     action_region = (x, y, x + x_length, y + y_height)
     return action_region
+
 
 def print_action_next_action(next_action_time):
     action_started = time_format()
@@ -166,9 +172,10 @@ def locate_min_dungeon(dungeons):
 def enhance_image(image):
     if not isinstance(image, PIL.Image.Image):
         image = Image.open(image)
-    image = image.resize((image.width*4, image.height*4))
+    image = image.resize((image.width*6, image.height*6))
     new_image = image.filter(ImageFilter.SMOOTH)
     new_image = new_image.filter(ImageFilter.SMOOTH)
+    # new_image.show()
     return new_image
 
 
@@ -191,6 +198,7 @@ def get_resources_from_image(image):
 def get_image_from_zone(zone):
     return chili.grab_screen(zone)
 
+
 class TimerClass:
     """ A class to track stuff """
     name = ''
@@ -198,6 +206,7 @@ class TimerClass:
     end_time = 0
     index_of_timer = -1
     active_timers = {}
+
     def __init__(self, name, end_time=-1):
         self.name = name
         self.timer = time.time()

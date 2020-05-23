@@ -37,39 +37,6 @@ G_DUNGEON_INDEX = {
 }
 
 
-#class TimerClass:
-#    """ A class to track stuff """
-#    name = ''
-#    timer = 0
-#    end_time = 0
-#    index_of_timer = -1
-
-#    def __init__(self, name, end_time=-1):
-#        self.name = name
-#        self.timer = time.time()
-#        self.end_time = end_time
-#        ACTIVE_TIMERS.append(self)
-#        self.index_of_timer = len(ACTIVE_TIMERS) - 1
-
-#    def set_end_time(self, value):
-#        self.end_time = value
-
-#    def reset_timer(self):
-#        self.timer = time.time()
-
-#    def time_elapsed(self):
-#        time_elapsed = time.time() - self.timer
-#        return time_elapsed
-
-#    def time_remaining(self):
-#        if self.end_time == -1:
-#            print(f"{self.name} has no end time")
-#            return
-#        time_elapsed = self.time_elapsed()
-#        time_remaining = self.end_time - time_elapsed
-#        return time_remaining
-
-
 class ActionClass:
     COORDINATES = c.Coordinates()
     print(f"{Fore.CYAN}ActionClass called c.Coordinates() at {helpers.time_format()}")
@@ -84,7 +51,6 @@ class ActionClass:
 
     def __init__(self, name):
         self.name = name
-        self.last_cord_update = time.time()
         self.timer = TimerClass(self.name, -1)
         self.is_active = False
         self.action_region = -1
@@ -106,8 +72,8 @@ class ActionClass:
             pos = (self.FALL_BACK_POS[0], self.FALL_BACK_POS[1] + 45 * self.camp_index)
         x = round(pos[0])
         y = round(pos[1]) - 25
-        self.action_region_relative = (x - coordinates.x_pad, y - coordinates.y_pad,
-                                       x + 350 - coordinates.x_pad, y + 50 - coordinates.y_pad)
+        self.action_region_relative = (x - coordinates.X_PAD, y - coordinates.Y_PAD,
+                                       x + 350 - coordinates.X_PAD, y + 50 - coordinates.Y_PAD)
         pg.moveTo(pos[0] + 50, pos[1])
         tooltip_image = helpers.get_image_from_zone(coordinates.tooltip_region)
         time.sleep(0.1)
@@ -138,8 +104,8 @@ class ActionClass:
         x = round(pos[0])
         y = round(pos[1]) - 25
         self.action_region = (x, y, x + 350, y + 50)
-        self.action_region_relative = (x - coordinates.x_pad, y - coordinates.y_pad,
-                                       x + 350 - coordinates.x_pad, y + 50 - coordinates.y_pad)
+        self.action_region_relative = (x - coordinates.X_PAD, y - coordinates.Y_PAD,
+                                       x + 350 - coordinates.X_PAD, y + 50 - coordinates.Y_PAD)
         pg.moveTo(coordinates.safe_spot)
         helpers.click_image_in_zone(IMAGE_DICTIONARY[self.START_BUTTON], zone=self.action_region)
         pg.moveTo(coordinates.safe_spot)
@@ -160,8 +126,8 @@ class ActionClass:
             pos = (self.FALL_BACK_POS[0], self.FALL_BACK_POS[1] + 45 * self.camp_index)
         x = round(pos[0])
         y = round(pos[1]) - 15
-        zone = (x + coordinates.x_pad, y + coordinates.y_pad,
-                x + 400 + coordinates.x_pad, y + 65 + coordinates.y_pad)
+        zone = (x + coordinates.X_PAD, y + coordinates.Y_PAD,
+                x + 400 + coordinates.X_PAD, y + 65 + coordinates.Y_PAD)
         print(self.REWARD_BUTTON)
         helpers.click_image_in_zone(IMAGE_DICTIONARY[self.REWARD_BUTTON], zone=zone)
         pg.moveTo(coordinates.safe_spot)
@@ -176,10 +142,10 @@ class ActionClass:
         return self.COORDINATES
 
     def update_cords(self):
-        self.COORDINATES = c.Coordinates()
+        self.COORDINATES.find_game_window()
         self.CORD_LAST_UPDATE = time.time()
         print(f"{self.name} last update was {time.time() - self.CORD_LAST_UPDATE} ago")
-        print(f"{self.name} called for a cord update at {helpers.time_format(self.CORD_LAST_UPDATE):.0f}")
+        print(f"{self.name} called for a cord update at {helpers.time_format(self.CORD_LAST_UPDATE)}")
 
     def go_to_tab(self):
         if time.time() - self.CORD_LAST_UPDATE > 5:
@@ -192,7 +158,6 @@ class ActionClass:
 class Campaign(ActionClass):
     COORDINATES = c.CampaignCords()
     print(f"{Fore.CYAN}Campaign called c.CampaignCords() at {helpers.time_format()}")
-    CORD_LAST_UPDATE = time.time()
     START_BUTTON = "select_button"
     CLOSE_BUTTON = "auto_button"
     REWARD_BUTTON = "result_button"
@@ -222,22 +187,11 @@ class Campaign(ActionClass):
         helpers.click_image_on_screen(IMAGE_DICTIONARY[self.CLOSE_BUTTON])
         self.is_active = True
 
-    def update_cords(self):
-        Campaign.COORDINATES = c.CampaignCords()
-        Campaign.CORD_LAST_UPDATE = time.time()
-        print(f"{self.name} last update was {time.time() - self.CORD_LAST_UPDATE} ago")
-        color = '\033[93m'
-        print(f"{color}{self.name} called for a cord update at {helpers.time_format(self.CORD_LAST_UPDATE):.0f}")
-        self.update_tabs()
-
-    def update_tabs(self):
-        Campaign.TABS = [Campaign.COORDINATES.tab]
 
 
 class Dungeon(ActionClass):
     COORDINATES = c.DungeonCords()
     print(f"{Fore.CYAN}Dungeon called c.DungeonCords() at {helpers.time_format()}")
-    CORD_LAST_UPDATE = time.time()
     START_BUTTON = "info_button"
     CLOSE_BUTTON = "start_button"
     REWARD_BUTTON = "dungeon_finished_button"
@@ -275,21 +229,12 @@ class Dungeon(ActionClass):
     def check_if_correct_team(self):
         coordinates = self.get_cords()
         next_button_cord = helpers.add_screen_padding(
-            helpers.find_image_in_game_window(IMAGE_DICTIONARY["next_button"], cords=coordinates),
+            helpers.find_image_in_game_window(IMAGE_DICTIONARY["next_button"], coordinates=coordinates),
             coordinates)
         button_center = (next_button_cord[0] + 26, next_button_cord[1] + 18)
         current_team = d.new_check_current_team(self.team, button_center)
         if not current_team:
             return
-
-    def update_cords(self):
-        Dungeon.COORDINATES = c.DungeonCords()
-        print(f"{Fore.YELLOW}{self.name} called for a cord update at {helpers.time_format(self.CORD_LAST_UPDATE)}\nlast update was {time.time() - self.CORD_LAST_UPDATE:.0f} ago")
-        Dungeon.CORD_LAST_UPDATE = time.time()
-        self.update_tabs()
-
-    def update_tabs(self):
-        Dungeon.TABS = [Dungeon.COORDINATES.tab, Dungeon.COORDINATES.dungeon_tab]
 
 
 def create_default_actions(dungeon=False, campaign=False):
@@ -318,7 +263,7 @@ def create_default_actions(dungeon=False, campaign=False):
 
 def nrdc_loop(loop_count):
     """ loop_count = how many total dungeons it should loop through """
-    # Get cords and set timers to track it
+    # Get coordinates and set timers to track it
     create_default_actions(dungeon=True)
     dungeons = Dungeon.DUNGEONS
     for dungeon_name in dungeons:
@@ -467,14 +412,11 @@ def main():
     started_at = helpers.time_format()
     main_timer = TimerClass("Rebirth")
     print(f'{Fore.GREEN}Script starting at:{started_at}\n')
-    print("DungeonCords tab tab is: ", Dungeon.COORDINATES.tab)
-    time.sleep(5)
-    c.Coordinates.X_PAD, c.Coordinates.Y_PAD = c.find_game_window()
-    print("DungeonCords tab is: ", Dungeon.COORDINATES.tab)
     #div_gen = div.Divinity(c.DivinityCords())
     #if not div_gen.is_constructed:
     #    print("divgen is not constructed")
     #    div_gen.construct()
+    #div_gen.construct_upgrades()
     #planet = p.Planet()
     #p.Planet.POWER_SURGING = True
     #planet.fight_UB()
@@ -487,16 +429,16 @@ def main():
     ##div_gen.construct_upgrades()
     #div_gen.remove_all_clones()
     #div_gen.cap_max()
-    # dungeon_test = Dungeon("water", "team_2", "depth_2", "18", "3")
-    # # dungeon_test.check_if_active()
-    # # dungeon_test.collect_reward()
-    # # dungeon_test.start_action()
-    # create_default_actions(c.DungeonCords(), c.CampaignCords())
-    # for action in ActionClass.ALL_ACTION_CLASSES:
-    #     action = ActionClass.ALL_ACTION_CLASSES[action]
-    #     action.check_if_active()
-    #     if not action.is_active:
-    #         action.start_action()
+    #dungeon_test = Dungeon("water", "team_2", "depth_2", "18", "3")
+    #dungeon_test.check_if_active()
+    #dungeon_test.collect_reward()
+    #dungeon_test.start_action()
+    create_default_actions(c.DungeonCords(), c.CampaignCords())
+    for action in ActionClass.ALL_ACTION_CLASSES:
+        action = ActionClass.ALL_ACTION_CLASSES[action]
+        action.check_if_active()
+        if not action.is_active:
+            action.start_action()
 
     #nrdc_loop(50)
     # print(dungeon_test.get_cords())
@@ -520,7 +462,7 @@ This way we can add them all to a common timer tracker and launch "interact"
 with the dungeon/campaign that is up for completion/starting
 
 class:
-    cords for its tab?
+    coordinates for its tab?
     camp/dungen name
     timer
     current_remaining
@@ -529,40 +471,40 @@ class:
 
 def creating_next_at_2():
     ""sets next at to option 2""
-    cords = c.creatingCords()
-    pg.click(cords.tab)
-    pg.click(cords.light)
-    pg.click(cords.nextAt_2)
+    coordinates = c.creatingCords()
+    pg.click(coordinates.tab)
+    pg.click(coordinates.light)
+    pg.click(coordinates.nextAt_2)
 
 
 def pet_campaign_auto(hours_cord):
     pg.click(hours_cord)
     helpers.click_image_on_screen(IMAGE_DICTIONARY["auto_button"])
-    # pg.click(cords.auto_select)
+    # pg.click(coordinates.auto_select)
 
 
 def feed_pets():
-    cords = c.petCords()
-    pg.click(cords.tab)
-    pg.click(cords.feed)
+    coordinates = c.petCords()
+    pg.click(coordinates.tab)
+    pg.click(coordinates.feed)
 
 
 def collect_campaign_rewards(coordinates):
     ""clicks the coordinates to finish a campaign ""
-    cords = c.CampaignCords()
-    pg.click(cords.tab)
-    pg.click(coordinates[0], coordinates[1] + cords.padding)  # collect reward
+    coordinates = c.CampaignCords()
+    pg.click(coordinates.tab)
+    pg.click(coordinates[0], coordinates[1] + coordinates.padding)  # collect reward
     time.sleep(0.1)
-    pg.click(cords.close_result)
+    pg.click(coordinates.close_result)
 
 
 def spend_bp_on_food():
-    cords = c.petCords()
-    pg.click(cords.tab)
-    pg.click(cords.buyFoodButton)
-    pg.click(cords.bpFoodOption)
-    pg.click(cords.buyFoodMax)
-    pg.click(cords.confirmPurchase)
+    coordinates = c.petCords()
+    pg.click(coordinates.tab)
+    pg.click(coordinates.buyFoodButton)
+    pg.click(coordinates.bpFoodOption)
+    pg.click(coordinates.buyFoodMax)
+    pg.click(coordinates.confirmPurchase)
 
 
 def end_of_run_clean_up_food(should_restart):
@@ -599,70 +541,70 @@ def end_of_run_clean_up_light_clones(should_restart):
 
 def build_monuments():
     # ToG
-    cords = c.monumentCords()
+    coordinates = c.monumentCords()
     clone_cords = c.cloneAmounts()
-    pg.click(cords.tab)
-    pg.mouseDown(cords.bottomOfScroll)
+    pg.click(coordinates.tab)
+    pg.mouseDown(coordinates.bottomOfScroll)
     time.sleep(1)
     pg.mouseUp()
     pg.click(clone_cords.twoHundredK)
-    pg.click(cords.toGUpgradePlus)
+    pg.click(coordinates.toGUpgradePlus)
     time.sleep(0.1)
     pg.click(clone_cords.maxAmount)
-    pg.click(cords.toGPlus)
+    pg.click(coordinates.toGPlus)
 
 
 def all_clones_on_monument_upgrade():
-    cords = c.monumentCords()
-    pg.click(cords.tab)
-    pg.mouseDown(cords.bottomOfScroll)
+    coordinates = c.monumentCords()
+    pg.click(coordinates.tab)
+    pg.mouseDown(coordinates.bottomOfScroll)
     time.sleep(1)
     pg.mouseUp()
     time.sleep(0.1)
     pg.click(c.cloneAmounts().maxAmount)
-    pg.click(cords.toGMinus)
+    pg.click(coordinates.toGMinus)
     time.sleep(0.1)
-    pg.click(cords.toGUpgradePlus)
+    pg.click(coordinates.toGUpgradePlus)
 
 
 def final_battle():
-    cords = c.godCords()
-    pg.click(cords.tab)
-    pg.click(cords.unleash)
-    pg.click(cords.fingerFlick)
+    coordinates = c.godCords()
+    pg.click(coordinates.tab)
+    pg.click(coordinates.unleash)
+    pg.click(coordinates.fingerFlick)
     for _ in range(5):
         time.sleep(2)
-        pg.click(cords.fight)
+        pg.click(coordinates.fight)
 
 
 def weather_ceation_lock():
     # didnt work last time
-    cords = c.creatingCords()
-    pg.click(cords.tab)
-    pg.mouseDown(cords.weather_scroll_position)
+    coordinates = c.creatingCords()
+    pg.click(coordinates.tab)
+    pg.mouseDown(coordinates.weather_scroll_position)
     time.sleep(0.5)
     pg.mouseUp()
     time.sleep(0.1)
-    pg.click(cords.weather)
+    pg.click(coordinates.weather)
     time.sleep(0.1)
-    pg.click(cords.nextAtOff)
+    pg.click(coordinates.nextAtOff)
 
 
-def fresh_dungeons(dungeons, cords=-1):
-    if cords == -1:
-        cords = c.DungeonCords()
-    pg.click(cords.tab)
+def fresh_dungeons(dungeons, coordinates=-1):
+    if coordinates == -1:
+        coordinates = c.DungeonCords()
+    pg.click(coordinates.tab)
     coordinates = c.Coordinates()
-    next_button_cord = helpers.add_screen_padding(helpers.find_image_in_game_window(IMAGE_DICTIONARY["next_button"], cords=coordinates), coordinates)
+    next_button_cord = helpers.add_screen_padding(helpers.find_image_in_game_window(IMAGE_DICTIONARY["next_button"], coordinates=coordinates), coordinates)
     new_value = (next_button_cord[0] + 26, next_button_cord[1] + 18)
-    current_team_one = d.new_check_current_team("petTeam_1", new_value, cords)
+    current_team_one = d.new_check_current_team("petTeam_1", new_value, coordinates)
     if not current_team_one:
         return
     for dungeon in dungeons:
         print("Starting: ", dungeon.name)
         dungeon_timer = TimerClass(dungeon.name, dungeon.current_duration)
         TIMER_TRACKER[dungeon_timer.name] = dungeon_timer
-        set_CAMPAIGNS(cords.tab, dungeon.name, "info_button", "start_button", dungeon, coordinates)
+        set_CAMPAIGNS(coordinates.tab, dungeon.name, "info_button", "start_button", dungeon, coordinates)
 
 
 def check_light_clone_cost():
@@ -687,22 +629,22 @@ def check_light_clone_cost():
 
 
 def spend_bp_on_light_clones():
-    cords = c.SpaceDimCords()
-    pg.click(cords.tab)
-    pg.moveTo(cords.tab[0], cords.tab[1] + 200)
+    coordinates = c.SpaceDimCords()
+    pg.click(coordinates.tab)
+    pg.moveTo(coordinates.tab[0], coordinates.tab[1] + 200)
     # make sure we're on the right page
     buy_screen_pos = helpers.find_image_in_game_window(IMAGE_DICTIONARY["buy_light_clones"], 0.9, 1)
     if buy_screen_pos[0] == -1:
         # if buy_screen_pos == -1, we want to get there
-        pg.click(cords.buy_more_button)
+        pg.click(coordinates.buy_more_button)
     buy_button_pos = helpers.find_image_in_game_window(IMAGE_DICTIONARY["buy_button"], 0.9)
     while buy_button_pos[0] != -1:
         print("We have a buy button")
         if check_light_clone_cost():
             # buy light clones
-            pg.click(cords.buy_max)
-            pg.click(cords.buy_middle)
-            pg.click(cords.buy_lowest)
+            pg.click(coordinates.buy_max)
+            pg.click(coordinates.buy_middle)
+            pg.click(coordinates.buy_lowest)
         else:
             break
         buy_button_pos = helpers.find_image_in_game_window(IMAGE_DICTIONARY["buy_button"], 0.9)
@@ -711,7 +653,7 @@ def spend_bp_on_light_clones():
 
 def set_CAMPAIGNS(tab_cord, identity_image, start_button, close_button, dungeon=-1, coordinates=-1):
     "" This can set and collect both campaign and dungeons.
-tab -> campaign or dungeon cords
+tab -> campaign or dungeon coordinates
 identity_image -> the campaign/dungeon to start
 start_button -> "Select" for campaign, "info" for dungeon
 close_button -> "Auto" for campaign, "start" for dungeon
