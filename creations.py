@@ -13,6 +13,9 @@ class Creations(Tabs):
     NA_OFF = IMAGE_DICTIONARY["creation_off"]
     NA_ONE = IMAGE_DICTIONARY["creation_1"]
     NA_TWO = IMAGE_DICTIONARY["creation_2"]
+    CREATE_CLONES_MAX = IMAGE_DICTIONARY["create_clones_max"]
+    CREATE_CLONES_ON = IMAGE_DICTIONARY["afky_on"]
+    CREATE_CLONES_OFF = IMAGE_DICTIONARY["afky_off"]
 
     SHADOW_CLONES = IMAGE_DICTIONARY["shadow_clones"]
     LIGHT = IMAGE_DICTIONARY["light"]
@@ -49,6 +52,15 @@ class Creations(Tabs):
         helpers.click_image_on_screen(self.NA_TWO, self.COORDINATES)
         self.create(image)
 
+    def create_clones_on(self):
+        self.go_to_tab()
+        zone = helpers.get_active_zone(self.CREATE_CLONES_MAX, 500, 60, self.COORDINATES)
+        helpers.click_image_in_zone(self.CREATE_CLONES_OFF, zone=zone)
+
+    def create_clones_off(self):
+        self.go_to_tab()
+        zone = helpers.get_active_zone(self.CREATE_CLONES_MAX, 500, 60, self.COORDINATES)
+        helpers.click_image_in_zone(self.CREATE_CLONES_ON, zone=zone)
     # def upgrade(self, image):
     #     self.go_to_tab()
     #     if self.IMAGES.index(image) > 1:

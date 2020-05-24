@@ -400,6 +400,7 @@ def main():
     main_timer = TimerClass("Rebirth")
     print(f'{Fore.GREEN}Script starting at:{started_at}\n')
     creation = Creations("creation")
+    creation.create_clones_on()
     creation.create_progress(creation.WEATHER)
     # mon = monuments.Monuments("monuments")
     # mon.build(mon.EVERLASTING_LIGHTHOUSE)
