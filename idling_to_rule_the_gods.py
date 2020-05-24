@@ -14,7 +14,7 @@ from tabs import Tabs
 from pets import Pets
 from monuments import Monuments
 from creations import Creations
-
+from rebirth import Rebirth
 ACTIVE_DUNGEONS = {}
 ACTIVE_TIMERS = []
 TIMER_TRACKER = {}
@@ -366,7 +366,7 @@ def quick_rebirth():
     monuments = Monuments("monuments")
     creation = Creations("creation")
     divinity = Divinity("divinity")
-    planet = Planet("planet")
+    planet = Planet()
     time.sleep(1)
     pets.distribute()
     time.sleep(1)
@@ -377,13 +377,24 @@ def quick_rebirth():
     time.sleep(2)
     creation.create_clones_on()
     divinity.construct()
+    pg.moveTo(divinity.COORDINATES.safe_spot)
     time.sleep(1)
     divinity.construct_upgrades()
-    for _ in range(10):
-        #
+    for _ in range(5):
         pets.distribute()
         divinity.add_to_div()
         divinity.construct_upgrades()
+        time.sleep(10)
+    for _ in range(5):
+        pets.distribute()
+        divinity.add_to_div()
+        divinity.construct_upgrades()
+        time.sleep(30)
+    for _ in range(10):
+        pets.distribute()
+        divinity.add_to_div()
+        divinity.construct_upgrades()
+        time.sleep(60)
     divinity.remove_all_clones()
     divinity.cap_max()
     planet.power_surge()
@@ -392,13 +403,14 @@ def quick_rebirth():
         # Idle loop
         pets.distribute()
         divinity.add_to_div()
-        time.sleep(60)
+        time.sleep(120)
     creation.finished_cycle = creation.check_if_idle()
     while not creation.finished_cycle:
         creation.finished_cycle = creation.check_if_idle()
         pets.distribute()
         divinity.add_to_div()
         time.sleep(30)
+    creation.create_specific(creation.WEATHER)
     pg.keyDown("shift")
     pg.press("r")
     pg.keyUp("shift")
@@ -425,6 +437,7 @@ def quick_rebirth():
     pets.buy_pet_food()
     # bp.light_clones()
     # bp.pet_stones()
+    Rebirth("rebirth").rebirth()
     quick_rebirth()
 
 
@@ -433,8 +446,11 @@ def main():
     started_at = helpers.time_format()
     main_timer = TimerClass("Rebirth")
     print(f'{Fore.GREEN}Script starting at:{started_at}\n')
-    pets = Pets("pets")
-    pets.buy_pet_food()
+    # pets = Pets("pets")
+    # pets.buy_pet_food()
+    rebirth = Rebirth("rebirth")
+    rebirth.rebirth()
+    quick_rebirth()
     # mon = monuments.Monuments("monuments")
     # mon.build(mon.EVERLASTING_LIGHTHOUSE)
     # mon.upgrade(mon.EVERLASTING_LIGHTHOUSE)

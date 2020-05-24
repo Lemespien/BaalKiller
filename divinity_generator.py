@@ -20,7 +20,7 @@ class Divinity(Tabs):
     TABS = [COORDINATES.tab]
 
     def __init__(self, name):
-        super().__init__(self, name)
+        super().__init__(name)
         self.go_to_tab()
         self.is_constructed = self.check_if_constructed()
 
@@ -49,7 +49,7 @@ class Divinity(Tabs):
         clones_on_capacity = round(current_clones/20)
         current_clones -= clones_on_capacity
         clones_on_upgrades = round(current_clones/2)
-        clones_use_zone = helpers.get_active_zone(Divinity.CLONES_TO_USE_IMAGE, 200, 50, coordinates)
+        clones_use_zone = helpers.get_active_zone(Divinity.CLONES_TO_USE_IMAGE, 200, zone_y_height, coordinates)
         images = [Divinity.GAIN_IMAGE, Divinity.CONVERT_IMAGE]
         self.change_clone_use_amount(clones_on_upgrades, clones_use_zone)
         self.add_or_remove_clones(images, zone_x_width, zone_y_height, Divinity.PLUS)
@@ -77,7 +77,7 @@ class Divinity(Tabs):
         images = [Divinity.GAIN_IMAGE, Divinity.CAPACITY_IMAGE, Divinity.CONVERT_IMAGE, Divinity.WORKER_CLONES_IMAGE]
         self.add_or_remove_clones(images, 500, 50, Divinity.MINUS)
 
-    def add_or_remove_clones(self, images, zone_x_width=500, zone_y_height=50, click_image=None):
+    def add_or_remove_clones(self, images, zone_x_width=500, zone_y_height=60, click_image=None):
         coordinates = self.COORDINATES
         for image in images:
             zone = helpers.get_active_zone(image, zone_x_width, zone_y_height, coordinates)

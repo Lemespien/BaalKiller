@@ -175,6 +175,8 @@ def enhance_image(image):
     image = image.resize((image.width*6, image.height*6))
     new_image = image.filter(ImageFilter.SMOOTH)
     new_image = new_image.filter(ImageFilter.SMOOTH)
+    new_image = new_image.filter(ImageFilter.SMOOTH)
+    new_image = new_image.filter(ImageFilter.SMOOTH)
     # new_image.show()
     return new_image
 
