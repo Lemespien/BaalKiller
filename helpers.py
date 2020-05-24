@@ -4,10 +4,10 @@ import PIL
 from PIL import Image, ImageFilter
 import pyautogui as pg
 import pytesseract as pyte
+from colorama import Fore
 import imagesearch as imgS
 import coordinates as c
 import chilimangoes as chili
-from colorama import Fore, Back, Style
 pyte.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
 
@@ -133,7 +133,7 @@ def get_active_zone(image, x_length, y_height, coordinates=-1):
     if pos[0] == -1:
         return -1
     x = round(pos[0])
-    y = round(pos[1]) - 35
+    y = round(pos[1]) - 40
     action_region = (x, y, x + x_length, y + y_height)
     return action_region
 

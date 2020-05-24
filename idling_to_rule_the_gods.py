@@ -12,6 +12,7 @@ from image_index import IMAGE_DICTIONARY
 import gods
 from tabs import Tabs
 import pets
+import monuments
 
 ACTIVE_DUNGEONS = {}
 ACTIVE_TIMERS = []
@@ -397,13 +398,16 @@ def main():
     started_at = helpers.time_format()
     main_timer = TimerClass("Rebirth")
     print(f'{Fore.GREEN}Script starting at:{started_at}\n')
-    #div_gen = div.Divinity(c.DivinityCords())
+    mon = monuments.Monuments("monuments")
+    mon.build(mon.EVERLASTING_LIGHTHOUSE)
+    mon.upgrade(mon.EVERLASTING_LIGHTHOUSE)
+    # div_gen = div.Divinity(c.DivinityCords())
     # if not div_gen.is_constructed:
     #    print("divgen is not constructed")
     #    div_gen.construct()
     # div_gen.construct_upgrades()
-    #planet = p.Planet()
-    #p.Planet.POWER_SURGING = True
+    # planet = p.Planet()
+    # p.Planet.POWER_SURGING = True
     # planet.fight_UB()
     # planet.create_crystals()
     # planet.upgrade_crystals()
@@ -414,7 +418,7 @@ def main():
     # div_gen.construct_upgrades()
     # div_gen.remove_all_clones()
     # div_gen.cap_max()
-    #dungeon_test = Dungeon("water", "team_2", "depth_2", "18", "3")
+    # dungeon_test = Dungeon("water", "team_2", "depth_2", "18", "3")
     # dungeon_test.check_if_active()
     # dungeon_test.collect_reward()
     # dungeon_test.start_action()

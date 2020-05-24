@@ -82,8 +82,4 @@ class Divinity(Tabs):
         for image in images:
             zone = helpers.get_active_zone(image, zone_x_width, zone_y_height, coordinates)
             print("add_or_remove_clones zone:", zone)
-            pg.moveTo(zone[0], zone[1])
-            time.sleep(3)
-            pg.moveTo(zone[2], zone[3])
-            time.sleep(3)
             helpers.click_image_in_zone(click_image, zone=zone)
