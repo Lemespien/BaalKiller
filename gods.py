@@ -1,7 +1,7 @@
 import coordinates as c
 from image_index import IMAGE_DICTIONARY
 import helpers
-from idling_to_rule_the_gods import Tabs
+from tabs import Tabs
 
 
 class Gods(Tabs):

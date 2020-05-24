@@ -3,16 +3,17 @@ import time
 from colorama import Fore, init
 import pyautogui as pg
 import coordinates as c
-import divinity_generator as div
+from divinity_generator import Divinity
 import dungeons as d
 import helpers
 from helpers import TimerClass
-import planet as p
+from planet import Planet
 from image_index import IMAGE_DICTIONARY
-import gods
+from gods import Gods
 from tabs import Tabs
-import pets
-import monuments
+from pets import Pets
+from monuments import Monuments
+from creations import Creations
 
 ACTIVE_DUNGEONS = {}
 ACTIVE_TIMERS = []
@@ -34,10 +35,10 @@ G_DUNGEON_INDEX = {
 
     "newbie": 0,
     "scrap": 1,
-    "water": 2,
-    "volcano": 3,
+    "water_temple": 2,
+    "fire_temple": 3,
     "mountain": 4,
-    "forest": 5
+    "forest_temple": 5
 }
 
 
@@ -226,13 +227,13 @@ def create_default_actions(dungeon=False, campaign=False):
     """ Returns an array of "Actions" with the corresponding responsibility (dungeon or campaigns) """
     actions = []
     if dungeon:
-        volcano = Dungeon("volcano", "team_1", "depth_2", "16", "4")
-        water = Dungeon("water", "team_2", "depth_2", "18", "3")
-        forest = Dungeon("forest", "team_3", "depth_1", "6", "7")
-        actions.append(volcano)
-        actions.append(water)
-        actions.append(forest)
-        volcano.go_to_tab()
+        fire_temple = Dungeon("fire_temple", "team_1", "depth_2", "16", "4")
+        water_temple = Dungeon("water_temple", "team_2", "depth_2", "18", "3")
+        forest_temple = Dungeon("forest_temple", "team_3", "depth_1", "6", "7")
+        actions.append(fire_temple)
+        actions.append(water_temple)
+        actions.append(forest_temple)
+        fire_temple.go_to_tab()
     if campaign:
         growth = Campaign("growth", "12")
         item = Campaign("item", "12")
@@ -398,9 +399,11 @@ def main():
     started_at = helpers.time_format()
     main_timer = TimerClass("Rebirth")
     print(f'{Fore.GREEN}Script starting at:{started_at}\n')
-    mon = monuments.Monuments("monuments")
-    mon.build(mon.EVERLASTING_LIGHTHOUSE)
-    mon.upgrade(mon.EVERLASTING_LIGHTHOUSE)
+    creation = Creations("creation")
+    creation.create_progress(creation.WEATHER)
+    # mon = monuments.Monuments("monuments")
+    # mon.build(mon.EVERLASTING_LIGHTHOUSE)
+    # mon.upgrade(mon.EVERLASTING_LIGHTHOUSE)
     # div_gen = div.Divinity(c.DivinityCords())
     # if not div_gen.is_constructed:
     #    print("divgen is not constructed")
@@ -418,7 +421,7 @@ def main():
     # div_gen.construct_upgrades()
     # div_gen.remove_all_clones()
     # div_gen.cap_max()
-    # dungeon_test = Dungeon("water", "team_2", "depth_2", "18", "3")
+    # dungeon_test = Dungeon("water_temple", "team_2", "depth_2", "18", "3")
     # dungeon_test.check_if_active()
     # dungeon_test.collect_reward()
     # dungeon_test.start_action()
