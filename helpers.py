@@ -19,11 +19,16 @@ def get_clone_count(coordinates=-1):
     split_text = text.split()
     try:
         index_of_slash = split_text.index("/")
-        clone_count = int(split_text[index_of_slash-1].replace(",", ""))
-
     except ValueError:
-        print(text)
-        print("Clone error?")
+        try:
+            index_of_slash = split_text.index("|")
+        except ValueError:
+            print(text)
+            print("Clone error?")
+            return -1
+    try:
+        clone_count = int(split_text[index_of_slash-1].replace(",", ""))
+    except ValueError:
         return -1
     return clone_count
 
@@ -114,6 +119,7 @@ def click_image_on_screen(image, coordinates=-1):
     if image_pos[0] != -1:
         # move to and click resetbutton
         pg.click(image_pos[0] + width/2, image_pos[1] + height/2)
+        return (image_pos[0] + width/2, image_pos[1] + height/2)
 
 
 def click_image_in_zone(image, x_1=None, y_1=None, x_2=None, y_2=None, clicks=1, zone=None):
@@ -124,9 +130,10 @@ def click_image_in_zone(image, x_1=None, y_1=None, x_2=None, y_2=None, clicks=1,
     image_pos = find_image_on_screen(image, x_1, y_1, x_2, y_2)
     if image_pos[0] != -1:
         pg.click(x_1 + image_pos[0] + width/2, y_1 + image_pos[1] + height/2, clicks=clicks)
+        return (x_1 + image_pos[0] + width/2, y_1 + image_pos[1] + height/2)
 
 
-def get_active_zone(image, x_length, y_height, coordinates=-1):
+def get_active_zone(image, zone_x_width, zone_y_height, coordinates=-1):
     if coordinates == -1:
         coordinates = c.Coordinates()
     pos = return_position_of_image_on_screen(image, coordinates)
@@ -134,7 +141,7 @@ def get_active_zone(image, x_length, y_height, coordinates=-1):
         return -1
     x = round(pos[0])
     y = round(pos[1]) - 40
-    action_region = (x, y, x + x_length, y + y_height)
+    action_region = (x, y, x + zone_x_width, y + zone_y_height)
     return action_region
 
 
@@ -175,14 +182,13 @@ def enhance_image(image):
     image = image.resize((image.width*6, image.height*6))
     new_image = image.filter(ImageFilter.SMOOTH)
     new_image = new_image.filter(ImageFilter.SMOOTH)
-    new_image = new_image.filter(ImageFilter.SMOOTH)
-    new_image = new_image.filter(ImageFilter.SMOOTH)
+
     # new_image.show()
     return new_image
 
 
 def get_text_from_image(image):
-    txt = pyte.image_to_string(enhance_image(image))
+    txt = pyte.image_to_string(enhance_image(image), lang='eng')
     return txt
 
 

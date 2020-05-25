@@ -3,6 +3,7 @@ from image_index import IMAGE_DICTIONARY
 import helpers
 from tabs import Tabs
 import time
+import pyautogui as pg
 
 
 class Pets(Tabs):
@@ -13,7 +14,17 @@ class Pets(Tabs):
 
     def distribute(self):
         self.go_to_tab()
-        helpers.click_image_on_screen(self.DISTRIBUTE)
+        coordinates = self.COORDINATES
+        image = self.DISTRIBUTE
+        if image in coordinates.IMAGE_CACHE:
+            pos = coordinates.IMAGE_CACHE[image]
+            print("got image from cache")
+        else:
+            pos = helpers.click_image_on_screen(image)
+            coordinates.IMAGE_CACHE[image] = pos
+            print("cached image")
+        pg.click(pos)
+        pg.moveTo(coordinates.safe_spot)
 
     def feed(self):
         self.go_to_tab()

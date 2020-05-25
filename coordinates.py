@@ -37,6 +37,7 @@ def find_game_window():
 
 class Coordinates:
     X_PAD, Y_PAD = find_game_window()
+    IMAGE_CACHE = {}
 
     def __init__(self):
         self.game_region = (0, 0, 970, 645)

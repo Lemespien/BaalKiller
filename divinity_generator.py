@@ -17,6 +17,7 @@ class Divinity(Tabs):
     WORKER_CLONES_IMAGE = IMAGE_DICTIONARY["worker_clones"]
     CLONES_TO_USE_IMAGE = IMAGE_DICTIONARY["clones_use"]
     CLONE_INPUT_IMAGE = IMAGE_DICTIONARY["clone_input"]
+    image_cache = {}
     TABS = [COORDINATES.tab]
 
     def __init__(self, name):
@@ -46,12 +47,25 @@ class Divinity(Tabs):
         zone_x_width = 500
         zone_y_height = 60
         current_clones = helpers.get_clone_count(coordinates)
+        if current_clones == -1:
+            current_clones = 100000
         clones_on_capacity = round(current_clones/20)
         current_clones -= clones_on_capacity
         clones_on_upgrades = round(current_clones/2)
-        clones_use_zone = helpers.get_active_zone(Divinity.CLONES_TO_USE_IMAGE, 200, zone_y_height, coordinates)
+        clones_to_use_image = Divinity.CLONES_TO_USE_IMAGE
+        clones_use_zone = self.check_if_cached(clones_to_use_image)
+        # ugly as
+        if clones_use_zone != -1:
+            self.change_clone_use_amount(clones_on_upgrades, clones_use_zone)
+        elif clones_use_zone == -1:
+            clones_use_zone = helpers.get_active_zone(clones_to_use_image, 200, zone_y_height, coordinates)
+            if clones_use_zone == -1:
+                pg.click(c.CloneAmounts().twoHundredK)
+            else:
+                self.cache_image(clones_to_use_image, clones_use_zone)
+                self.change_clone_use_amount(clones_on_upgrades, clones_use_zone)
+        ##
         images = [Divinity.GAIN_IMAGE, Divinity.CONVERT_IMAGE]
-        self.change_clone_use_amount(clones_on_upgrades, clones_use_zone)
         self.add_or_remove_clones(images, zone_x_width, zone_y_height, Divinity.PLUS)
         # set clones to 1/20 of current
         self.change_clone_use_amount(clones_on_capacity, clones_use_zone)
@@ -60,6 +74,7 @@ class Divinity(Tabs):
     def add_to_div(self):
         self.go_to_tab()
         helpers.click_image_on_screen(IMAGE_DICTIONARY["add2"])
+        pg.moveTo(self.COORDINATES.safe_spot)
 
     def cap_max(self):
         self.go_to_tab()
@@ -76,10 +91,3 @@ class Divinity(Tabs):
         helpers.click_image_on_screen(IMAGE_DICTIONARY["max"])
         images = [Divinity.GAIN_IMAGE, Divinity.CAPACITY_IMAGE, Divinity.CONVERT_IMAGE, Divinity.WORKER_CLONES_IMAGE]
         self.add_or_remove_clones(images, 500, 50, Divinity.MINUS)
-
-    def add_or_remove_clones(self, images, zone_x_width=500, zone_y_height=60, click_image=None):
-        coordinates = self.COORDINATES
-        for image in images:
-            zone = helpers.get_active_zone(image, zone_x_width, zone_y_height, coordinates)
-            print("add_or_remove_clones zone:", zone)
-            helpers.click_image_in_zone(click_image, zone=zone)

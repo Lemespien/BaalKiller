@@ -39,14 +39,12 @@ class Monuments(Tabs):
         else:
             helpers.scroll_to_top()
         time.sleep(0.1)
-        zone = helpers.get_active_zone(image, 500, 60, self.COORDINATES)
+        zone = self.check_if_cached(image)
+        if zone == -1:
+            zone = helpers.get_active_zone(image, 500, 60, self.COORDINATES)
+            if zone == -1:
+                return
         y_value = zone[1] + 40
         y_2_value = zone[3] + 40
         upgrade_zone = (zone[0], y_value, zone[2], y_2_value)
         helpers.click_image_in_zone(self.PLUS, zone=upgrade_zone)
-
-    def add_or_remove_clones(self, images, zone_x_width=500, zone_y_height=60, click_image=None):
-        coordinates = self.COORDINATES
-        for image in images:
-            zone = helpers.get_active_zone(image, zone_x_width, zone_y_height, coordinates)
-            helpers.click_image_in_zone(click_image, zone=zone)
